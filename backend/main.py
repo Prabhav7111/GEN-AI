@@ -1,3 +1,4 @@
+print("🔑 LOADED API KEY:", os.getenv("OPENAI_API_KEY"))
 from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from backend.utils.doc_parser import extract_text_from_pdf, extract_text_from_txt
