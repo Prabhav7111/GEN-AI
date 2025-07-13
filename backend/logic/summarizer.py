@@ -7,6 +7,8 @@ def summarize_text(text: str, max_words: int = 150) -> str:
     if not text.strip():
         return None
 
+    print("📄 Gemini summarizing doc of length:", len(text)) 
+
     prompt = f"""
 Summarize the following document into approximately {max_words} words. Be concise, capture main points clearly.
 
