@@ -33,3 +33,37 @@ Questions:
     except Exception:
         return []
 
+def evaluate_answer(document_text: str, question: str, user_answer: str) -> Optional[str]:
+    """
+    Evaluates a user answers to a question using the document for reference.
+    Returns a feedback string with justification.
+    """
+    prompt = f"""
+You're evaluating an answer based on a source document.
+Read the document and question below.
+Then evaluate user answers, using only the document to justify your feedback.
+
+Document:
+\"\"\"
+{document_text[:3000]}
+\"\"\"
+
+Question: {question}
+
+User's Answer: {user_answer}
+
+Give constructive feedback, say if it's correct, partially right, or wrong, and explain briefly why.
+""".strip()
+
+    try:
+        res = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+            max_tokens=300
+        )
+        return res['choices'][0]['message']['content'].strip()
+    except Exception:
+        return None
+
+
