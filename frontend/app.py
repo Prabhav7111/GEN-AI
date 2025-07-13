@@ -10,7 +10,7 @@ doc_text = ""
 summary = ""
 
 if uploaded_file:
-    with st.spinner("Generating summary, hold on please", icon="🧠"):
+    with st.spinner("Generating summary, hold on please..."):
         files = {"file": (uploaded_file.name, uploaded_file.getvalue())}
         try:
             res = requests.post("http://localhost:8000/summarize/", files=files)
