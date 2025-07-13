@@ -5,6 +5,10 @@ from backend.logic.summarizer import summarize_text
 from pydantic import BaseModel
 from backend.logic.qa_engine import prepare_vector_index, answer_question
 from backend.logic.question_gen import generate_questions, evaluate_answer
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = FastAPI()
 
