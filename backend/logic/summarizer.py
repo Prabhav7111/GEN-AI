@@ -1,9 +1,9 @@
 import os
-import openai
+from openai import OpenAI
 from typing import Optional
 
-# Load API key from environment
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Create OpenAI client with API key
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
     """
@@ -22,7 +22,7 @@ def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
     print("🧾 Sample prompt:", input_chunk[:200])
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
@@ -37,7 +37,7 @@ def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
             temperature=0.4,
             max_tokens=300
         )
-        summary = response['choices'][0]['message']['content'].strip()
+        summary = response.choices[0].message.content.strip()
         print("✅ Summary generated.")
         return summary
     except Exception as e:
