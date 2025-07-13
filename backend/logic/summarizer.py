@@ -1,28 +1,38 @@
-import google.generativeai as genai
 import os
+import openai
+from typing import Optional
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def summarize_text(text: str, max_words: int = 150) -> str:
-    if not text.strip():
+def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
+    """
+    generate a brief summary from a longer document.
+    and limit output to roughly `max_words`.
+    """
+    if not text:
         return None
 
-    print("📄 Gemini summarizing doc of length:", len(text)) 
-
-    prompt = f"""
-Summarize the following document into approximately {max_words} words. Be concise, capture main points clearly.
-
-Document:
-\"\"\"
-{text[:8000]}
-\"\"\"
-Summary:
-""".strip()
+    input_chunk = text.strip()
+    if len(input_chunk) > 4000:
+        input_chunk = input_chunk[:4000]  # trim excessive input so keep it simple
 
     try:
-        model = genai.GenerativeModel("gemini-pro")
-        response = model.generate_content(prompt)
-        return response.text.strip()
-    except Exception as e:
-        print("❌ Gemini Error:", e)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": "Summarize the following text in no more than 150 words. Be concise and stick to the core ideas."
+                },
+                {
+                    "role": "user",
+                    "content": input_chunk
+                }
+            ],
+            temperature=0.4,
+            max_tokens=300
+        )
+        return response['choices'][0]['message']['content'].strip()
+    except Exception:
         return None
+
