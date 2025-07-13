@@ -56,3 +56,60 @@ if doc_text:
                 st.write(answer if answer else "No answer generated.")
             except Exception:
                 st.error("Failed to get an answer from the backend.")
+
+
+
+# Challenge Me Mode
+if doc_text:
+    st.markdown("---")
+    st.subheader("🧠 Challenge Me")
+
+    if "questions" not in st.session_state:
+        st.session_state.questions = []
+        st.session_state.current_q = 0
+        st.session_state.feedback = []
+
+    if st.button("Start Challenge"):
+        with st.spinner("Generating questions..."):
+            try:
+                res = requests.post("http://localhost:8000/challenge/", json={"document": doc_text})
+                qlist = res.json().get("questions", [])
+                if qlist:
+                    st.session_state.questions = qlist
+                    st.session_state.current_q = 0
+                    st.session_state.feedback = []
+            except:
+                st.error("Failed to generate challenge questions.")
+
+    if st.session_state.questions:
+        curr = st.session_state.current_q
+        if curr < len(st.session_state.questions):
+            question = st.session_state.questions[curr]
+            st.markdown(f"**Q{curr+1}:** {question}")
+            user_ans = st.text_area("Your Answer", key=f"answer_{curr}")
+
+            if st.button("Submit Answer", key=f"submit_{curr}"):
+                with st.spinner("Evaluating..."):
+                    try:
+                        payload = {
+                            "document": doc_text,
+                            "question": question,
+                            "user_answer": user_ans
+                        }
+                        res = requests.post("http://localhost:8000/evaluate/", json=payload)
+                        fb = res.json().get("feedback", "No feedback returned.")
+                        st.session_state.feedback.append((question, user_ans, fb))
+                        st.session_state.current_q += 1
+                        st.experimental_rerun()
+                    except:
+                        st.error("Could not evaluate the answer.")
+
+    if st.session_state.current_q == len(st.session_state.questions):
+        st.success("Challenge Complete 👀")
+        st.markdown("### 📝 Feedback Summary:")
+        for i, (q, a, f) in enumerate(st.session_state.feedback, 1):
+            st.markdown(f"**Q{i}:** {q}")
+            st.markdown(f"_Your Answer:_ {a}")
+            st.markdown(f"_Feedback:_ {f}")
+            st.markdown("---")
+
