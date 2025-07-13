@@ -1,6 +1,6 @@
 # GEN-AI: Smart Document Assistant
 
-A local GenAI-powered assistant that processes user-uploaded documents to:
+A local GenAI powered assistant that processes user uploaded documents to:
 
 - Generate a brief summary (≤150 words)
 - Answer free form, context based questions
