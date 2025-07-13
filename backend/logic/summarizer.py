@@ -1,38 +1,26 @@
-import openai
+import google.generativeai as genai
 import os
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 def summarize_text(text: str, max_words: int = 150) -> str:
-    if not text:
-        print(" No input text provided.")
+    if not text.strip():
         return None
 
-    input_chunk = text.strip()
-    if len(input_chunk) > 4000:
-        input_chunk = input_chunk[:4000]
+    prompt = f"""
+Summarize the following document into approximately {max_words} words. Be concise, capture main points clearly.
 
-    print("🧾 Prompt being sent to OpenAI:", input_chunk[:200], "...")
+Document:
+\"\"\"
+{text[:8000]}
+\"\"\"
+Summary:
+""".strip()
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": f"Summarize the following text in no more than {max_words} words. Be concise and stick to core ideas."
-                },
-                {
-                    "role": "user",
-                    "content": input_chunk
-                }
-            ],
-            temperature=0.4,
-            max_tokens=300
-        )
-        summary = response['choices'][0]['message']['content'].strip()
-        print("✅ Summary Generated:", summary[:100], "...")
-        return summary
+        model = genai.GenerativeModel("gemini-pro")
+        response = model.generate_content(prompt)
+        return response.text.strip()
     except Exception as e:
-        print("❌ OpenAI API Error:", e)
+        print("❌ Gemini Error:", e)
         return None
