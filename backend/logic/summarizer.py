@@ -18,8 +18,8 @@ def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
     if len(input_chunk) > 4000:
         input_chunk = input_chunk[:4000]
 
-    print("📄 Summarizing text of length:", len(input_chunk))
-    print("🧾 Sample prompt:", input_chunk[:200])
+    print("Summarizing text of length:", len(input_chunk))
+    print("Sample prompt:", input_chunk[:200])
 
     try:
         response = client.chat.completions.create(
@@ -41,5 +41,5 @@ def summarize_text(text: str, max_words: int = 150) -> Optional[str]:
         print("✅ Summary generated.")
         return summary
     except Exception as e:
-        print("❌ OpenAI API Error:", e)
+        print("OpenAI API Error:", e)
         return None
