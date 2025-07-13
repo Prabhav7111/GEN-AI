@@ -22,3 +22,13 @@ A local GenAI powered assistant that processes user uploaded documents to:
 
 - PDF (.pdf)
 - Plain text (.txt)
+
+---
+
+## 🔐 Setup
+
+1. Create a .env file in the project root  
+2. Add your OpenAI key like: OPEN_API_KEY=sk.....
+3. install requirements
+4. run backend: uvicorn backend.main:app-- reload
+5. run frontend: streamlit run frontend/app.py
